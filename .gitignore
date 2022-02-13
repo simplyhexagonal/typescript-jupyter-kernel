@@ -1,0 +1,5 @@
+node_modules
+.ipynb_checkpoints
+.swc
+.env
+*.env

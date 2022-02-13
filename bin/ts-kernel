@@ -1,0 +1,15 @@
+#! /usr/bin/env node
+const { resolve } = require('path');
+
+const compilerOptions = require(resolve(__dirname, '..', 'tsconfig.json')).compilerOptions;
+
+console.log(compilerOptions);
+
+require('ts-node').register({
+  swc: true,
+  transpileOnly: true,
+  compilerOptions,
+  skipProject: true,
+});
+
+// module.exports = require(resolve(__dirname, '..', 'src', 'index.ts'));

@@ -1,0 +1,10 @@
+{
+  "argv": [
+    "ts-kernel",
+    "{connection_file}"
+  ],
+  "display_name": "Typescript",
+  "language": "ts",
+  "interrupt_mode": "signal",
+  "env": {}
+}
