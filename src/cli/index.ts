@@ -31,7 +31,7 @@ export default async () => {
     );
 
     try {
-      kernelsPath = possiblePaths.find(path => statSync(path).isDirectory()) as string;
+      kernelsPath = possiblePaths.find((path) => statSync(path).isDirectory()) as string;
     } catch (e) {
       await logger.error('Could not find kernels path!');
 
