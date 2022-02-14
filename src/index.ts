@@ -6,7 +6,6 @@ import Logger from '@simplyhexagonal/logger';
 import cli from './cli';
 import main from './threads/main';
 import heartbeat from './threads/heartbeat';
-import control from './threads/control';
 import shell from './threads/shell';
 import { KernelConfig } from './interfaces';
 
@@ -31,9 +30,6 @@ export default async () => {
   switch (threadName) {
     case 'heartbeat':
       heartbeat(jupyterConfig);
-      break;
-    case 'control':
-      control(jupyterConfig);
       break;
     case 'shell':
       shell(jupyterConfig);
