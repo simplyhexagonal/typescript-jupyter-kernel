@@ -1,8 +1,12 @@
 import { Socket } from 'zeromq';
+
 import {
   send,
   makeHeader,
 } from '../../utils';
+
+// @ts-ignore
+import { version as implementation_version } from '../../../package.json';
 
 export default (
   {
@@ -29,7 +33,7 @@ export default (
     status: 'ok',
     protocol_version: '5.0',
     implementation: 'typescript',
-    implementation_version: '1.0.0',
+    implementation_version,
     language_info: {
       name: 'typescript',
       version: '1.0',

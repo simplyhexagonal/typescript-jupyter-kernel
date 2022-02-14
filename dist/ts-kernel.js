@@ -60,7 +60,7 @@ var require_short_unique_id = __commonJS({
         DEFAULT_UUID_LENGTH: () => DEFAULT_UUID_LENGTH,
         default: () => ShortUniqueId3
       });
-      var version = "4.4.4";
+      var version2 = "4.4.4";
       var DEFAULT_UUID_LENGTH = 6;
       var DEFAULT_OPTIONS = {
         dictionary: "alphanum",
@@ -218,7 +218,7 @@ var require_short_unique_id = __commonJS({
           this.counter = 0;
           this.debug = false;
           this.dict = [];
-          this.version = version;
+          this.version = version2;
           const {
             dictionary,
             shuffle,
@@ -328,7 +328,7 @@ var src_exports = {};
 __export(src_exports, {
   default: () => src_default
 });
-var import_mono_context7 = __toESM(require("@simplyhexagonal/mono-context"));
+var import_mono_context6 = __toESM(require("@simplyhexagonal/mono-context"));
 var import_logger = __toESM(require("@simplyhexagonal/logger"));
 
 // src/cli/index.ts
@@ -419,18 +419,8 @@ var heartbeat_default = (jupyterConfig) => {
   });
 };
 
-// src/threads/control/index.ts
-var import_mono_context4 = __toESM(require("@simplyhexagonal/mono-context"));
-var control_default = (jupyterConfig) => {
-  const zmq2 = require("zeromq");
-  const logger2 = import_mono_context4.default.getStateValue("logger");
-  logger2.info("Control thread started");
-  const controlSocket = zmq2.socket("router");
-  controlSocket.bindSync(`tcp://${jupyterConfig.ip}:${jupyterConfig.control_port}`);
-};
-
 // src/threads/shell/index.ts
-var import_mono_context6 = __toESM(require("@simplyhexagonal/mono-context"));
+var import_mono_context5 = __toESM(require("@simplyhexagonal/mono-context"));
 
 // src/utils/index.ts
 var import_crypto = require("crypto");
@@ -465,14 +455,17 @@ var send = (socket, {
   reply.unshift(zmqIdentities);
   socket.send(reply);
 };
-var makeHeader = (msg_type, session, version) => ({
+var makeHeader = (msg_type, session, version2) => ({
   msg_type,
   session,
-  version,
+  version: version2,
   msg_id: msgUid(),
   username: "kernel",
   date: new Date().toISOString()
 });
+
+// package.json
+var version = "1.0.0";
 
 // src/threads/shell/kernelInfoReply.ts
 var kernelInfoReply_default = ({
@@ -480,7 +473,7 @@ var kernelInfoReply_default = ({
   ioSocket,
   key,
   session,
-  version,
+  version: version2,
   rawHeader,
   zmqIdentities,
   delimiter
@@ -489,7 +482,7 @@ var kernelInfoReply_default = ({
     status: "ok",
     protocol_version: "5.0",
     implementation: "typescript",
-    implementation_version: "1.0.0",
+    implementation_version: version,
     language_info: {
       name: "typescript",
       version: "1.0",
@@ -504,7 +497,7 @@ var kernelInfoReply_default = ({
   };
   send(shellSocket, {
     key,
-    header: makeHeader("kernel_info_reply", session, version),
+    header: makeHeader("kernel_info_reply", session, version2),
     parentHeader: rawHeader,
     content,
     zmqIdentities,
@@ -512,7 +505,7 @@ var kernelInfoReply_default = ({
   });
   send(ioSocket, {
     key,
-    header: makeHeader("status", session, version),
+    header: makeHeader("status", session, version2),
     parentHeader: rawHeader,
     content: {
       execution_state: "idle"
@@ -525,7 +518,7 @@ var kernelInfoReply_default = ({
 // src/threads/shell/executeReply.ts
 var import_path3 = require("path");
 var import_fs2 = require("fs");
-var import_mono_context5 = __toESM(require("@simplyhexagonal/mono-context"));
+var import_mono_context4 = __toESM(require("@simplyhexagonal/mono-context"));
 var import_exec = __toESM(require("@simplyhexagonal/exec"));
 var executionCount = 0;
 var executeReply_default = async ({
@@ -533,20 +526,20 @@ var executeReply_default = async ({
   ioSocket,
   key,
   session,
-  version,
+  version: version2,
   rawHeader,
   content: reqContent,
   zmqIdentities,
   delimiter
 }) => {
-  const logger2 = import_mono_context5.default.getStateValue("logger");
+  const logger2 = import_mono_context4.default.getStateValue("logger");
   executionCount += 1;
   let content = {
     execution_state: "busy"
   };
   send(ioSocket, {
     key,
-    header: makeHeader("status", session, version),
+    header: makeHeader("status", session, version2),
     parentHeader: rawHeader,
     content,
     zmqIdentities,
@@ -558,7 +551,7 @@ var executeReply_default = async ({
   };
   send(ioSocket, {
     key,
-    header: makeHeader("execute_input", session, version),
+    header: makeHeader("execute_input", session, version2),
     parentHeader: rawHeader,
     content,
     zmqIdentities,
@@ -578,7 +571,7 @@ var executeReply_default = async ({
   };
   send(ioSocket, {
     key,
-    header: makeHeader("execute_result", session, version),
+    header: makeHeader("execute_result", session, version2),
     parentHeader: rawHeader,
     content,
     zmqIdentities,
@@ -589,7 +582,7 @@ var executeReply_default = async ({
   };
   send(ioSocket, {
     key,
-    header: makeHeader("status", session, version),
+    header: makeHeader("status", session, version2),
     parentHeader: rawHeader,
     content,
     zmqIdentities,
@@ -610,7 +603,7 @@ var executeReply_default = async ({
   };
   send(shellSocket, {
     key,
-    header: makeHeader("kernel_info_reply", session, version),
+    header: makeHeader("kernel_info_reply", session, version2),
     parentHeader: rawHeader,
     metadata,
     content,
@@ -626,7 +619,7 @@ var reqResMap = {
 };
 var shell_default = ({ ip, shell_port, iopub_port, key }) => {
   const zmq2 = require("zeromq");
-  const logger2 = import_mono_context6.default.getStateValue("logger");
+  const logger2 = import_mono_context5.default.getStateValue("logger");
   logger2.info("Shell thread started");
   const shellSocket = zmq2.socket("router");
   const ioSocket = zmq2.socket("pub");
@@ -636,7 +629,7 @@ var shell_default = ({ ip, shell_port, iopub_port, key }) => {
     const {
       msg_type: msgType,
       session,
-      version
+      version: version2
     } = JSON.parse(rawHeader.toString("ascii"));
     const content = JSON.parse(rawContent.toString("ascii"));
     reqResMap[msgType]({
@@ -644,7 +637,7 @@ var shell_default = ({ ip, shell_port, iopub_port, key }) => {
       ioSocket,
       key,
       session,
-      version,
+      version: version2,
       rawHeader,
       content,
       zmqIdentities,
@@ -656,7 +649,7 @@ var shell_default = ({ ip, shell_port, iopub_port, key }) => {
 // src/index.ts
 require_main().config();
 var logger = new import_logger.default({});
-import_mono_context7.default.setState({
+import_mono_context6.default.setState({
   logger
 });
 var src_default = async () => {
@@ -670,9 +663,6 @@ var src_default = async () => {
   switch (threadName) {
     case "heartbeat":
       heartbeat_default(jupyterConfig);
-      break;
-    case "control":
-      control_default(jupyterConfig);
       break;
     case "shell":
       shell_default(jupyterConfig);
