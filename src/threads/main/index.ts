@@ -11,7 +11,7 @@ const startThread = (
 ) => {
   const logger = MonoContext.getStateValue('logger');
 
-  const tsKernelPath = resolvePath(__dirname, '..', '..', '..', 'bin', 'ts-kernel');
+  const tsKernelPath = resolvePath(__dirname, '..', 'bin', 'ts-kernel');
 
   const thread = fork(
     tsKernelPath,

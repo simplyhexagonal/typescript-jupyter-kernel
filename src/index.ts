@@ -16,7 +16,7 @@ MonoContext.setState({
   logger,
 });
 
-const run = async () => {
+export default async () => {
   await cli();
 
   const jupyterConfigPath = process.argv[2] || process.env.JUPYTER_CONFIG_PATH || '';
@@ -40,5 +40,3 @@ const run = async () => {
       break;
   }
 }
-
-run();

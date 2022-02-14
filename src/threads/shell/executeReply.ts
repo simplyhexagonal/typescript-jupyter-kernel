@@ -111,7 +111,7 @@ export default async (
   );
 
   const { exitCode, stdoutOutput, stderrOutput } = await exec(
-    `${resolve(__dirname, '..', '..', '..', 'node_modules', '.bin', 'ts-node')} --swc ${tempTsFile}`,
+    `${resolve(__dirname, '..', 'node_modules', '.bin', 'ts-node')} --swc ${tempTsFile}`,
   ).catch(
     async (e) => {
       await logger.error(e);

@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+MODULE_NAME=ts-kernel
+
+mkdir -p dist
+rm -rf dist/*
+esbuild src/index.ts --bundle \
+  --external:zeromq \
+  --external:\@simplyhexagonal/logger \
+  --external:\@simplyhexagonal/mono-context \
+  --external:\@simplyhexagonal/exec \
+  --platform=node \
+  --outfile=dist/$MODULE_NAME.js --sourcemap --format=cjs \
+  && tsc -d --emitDeclarationOnly --rootDir src --outDir dist \
+  && mv dist/index.d.ts dist/$MODULE_NAME.d.ts \
+  || exit 1

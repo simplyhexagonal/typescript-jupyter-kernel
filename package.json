@@ -6,11 +6,18 @@
     "ts-kernel": "bin/ts-kernel"
   },
   "scripts": {
-    "test": "cd tests && jupyter notebook",
-    "postpack": "npm install -g $(ls *.tgz) && rm *.tgz"
+    "build": "./scripts/build",
+    "test": "./scripts/build && cd tests && jupyter notebook",
+    "install:bin": "./scripts/build && npm pack && npm install -g $(ls *.tgz) && rm *.tgz"
   },
   "author": "Jean M. Lescure",
   "license": "Apache-2.0",
+  "files": [
+    "bin",
+    "dist",
+    "kernel.json",
+    "tsconfig.json"
+  ],
   "dependencies": {
     "@simplyhexagonal/elean": "^1.0.0",
     "@simplyhexagonal/exec": "^1.0.4",
@@ -27,5 +34,8 @@
     "tslib": "^2.3.1",
     "typescript": "^4.5.5",
     "zeromq": "^5.2.8"
+  },
+  "devDependencies": {
+    "esbuild": "^0.14.21"
   }
 }
