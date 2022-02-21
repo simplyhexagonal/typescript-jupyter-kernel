@@ -4,6 +4,7 @@ import {
   mkdirSync,
   writeFileSync,
   readFileSync,
+  copyFileSync,
 } from 'fs';
 import MonoContext from '@simplyhexagonal/mono-context';
 
@@ -25,6 +26,12 @@ export default async () => {
 
     let kernelsPath = '';
 
+    let kernelJsonPath = resolve(__dirname, '../kernel.json');
+
+    if (process.argv[3]) {
+      kernelJsonPath = resolve(process.argv[3]);
+    }
+
     logger.info(
       'Looking for kernels directory in:\n\n\t',
       possiblePaths.map((p) => p.replace('undefined', '%APPDATA%')).join('\n\t ')
@@ -45,14 +52,30 @@ export default async () => {
     try {
       mkdirSync(`${kernelsPath}/typescript`, { recursive: true });
 
+      const config = readFileSync(kernelJsonPath);
+
+      logger.info(config.toString());
+
       writeFileSync(
         installFilePath,
-        readFileSync(resolve(__dirname, '../kernel.json'))
+        config
       );
     } catch (e) {
       await logger.error('Could not install kernel!', e);
 
       process.exit(15);
+    }
+
+    try {
+      const kernelDirPath = kernelJsonPath.replace(/\/.+?$/, '').replace(/^[^\/\\]+$/, '');
+
+      const logo32Path = resolve(kernelDirPath, 'logo-32x32.png');
+      const logo64Path = resolve(kernelDirPath, 'logo-64x64.png');
+
+      statSync(logo32Path).isFile() && copyFileSync(logo32Path, `${kernelsPath}/typescript/logo-32x32.png`);
+      statSync(logo64Path).isFile() && copyFileSync(logo64Path, `${kernelsPath}/typescript/logo-64x64.png`);
+    } catch(e) {
+      await logger.warn('Could not copy logo files!', e);
     }
 
     await logger.info('Installed kernel successfully!');

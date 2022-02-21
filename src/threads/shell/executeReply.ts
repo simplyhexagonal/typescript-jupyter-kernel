@@ -6,10 +6,12 @@ import {
 import MonoContext from '@simplyhexagonal/mono-context';
 import exec from '@simplyhexagonal/exec';
 import { Socket } from 'zeromq';
+
 import {
   send,
   makeHeader,
   instanceUid,
+  jupyterPolyfill,
 } from '../../utils';
 
 let executionCount = 0;
@@ -82,32 +84,11 @@ export default async (
     }
   );
 
-  // content = {
-  //   name: 'stdout',
-  //   text: 'Hello, world!',
-  // };
-
-  // send(
-  //   ioSocket,
-  //   {
-  //     key: key,
-  //     header: makeHeader(
-  //       'stream',
-  //       session,
-  //       version,
-  //     ),
-  //     parentHeader: rawHeader,
-  //     content,
-  //     zmqIdentities,
-  //     delimiter,
-  //   }
-  // );
-
   const tempTsFile = resolve(process.cwd(), `._${instanceUid}-${executionCount}.ts`);
 
   writeFileSync(
     tempTsFile,
-    reqContent.code,
+    `${jupyterPolyfill}${reqContent.code}`,
   );
 
   const { exitCode, stdoutOutput, stderrOutput } = await exec(
@@ -169,29 +150,4 @@ export default async (
     status: 'ok',
     started: new Date().toISOString(),
   };
-
-  content = {
-    status: 'ok',
-    execution_count: executionCount,
-    user_variables: {},
-    payload: [],
-    user_expressions: {},
-  };
-
-  send(
-    shellSocket,
-    {
-      key: key,
-      header: makeHeader(
-        'kernel_info_reply',
-        session,
-        version,
-      ),
-      parentHeader: rawHeader,
-      metadata,
-      content,
-      zmqIdentities,
-      delimiter,
-    }
-  );
 }

@@ -16,3 +16,4 @@ export declare const send: (socket: Socket, { key, header, parentHeader, metadat
     delimiter: Buffer;
 }) => void;
 export declare const makeHeader: (msg_type: string, session: string, version: string) => KernealHeader;
+export declare const jupyterPolyfill = "\nconst jupyter: {\n  out: (...args: any[]) => void\n} = {};\njupyter.out = console.log;\n";

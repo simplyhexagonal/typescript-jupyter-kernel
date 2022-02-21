@@ -70,3 +70,10 @@ export const makeHeader = (
   username: 'kernel',
   date: new Date().toISOString(),
 });
+
+export const jupyterPolyfill = `
+const jupyter: {
+  out: (...args: any[]) => void
+} = {};
+jupyter.out = console.log;
+`;

@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
+    "target": "esnext",
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "downlevelIteration": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true,
     "lib": ["ESNext"],
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
@@ -15,6 +15,11 @@
     "sourceMap": true,
     "strict": true,
     "types": ["node"]
+  },
+  "ts-node": {
+    "compilerOptions": {
+      "target": "esnext"
+    }
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist", "src/index.test.ts"]
