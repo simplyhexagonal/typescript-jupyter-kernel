@@ -1,9 +1,5 @@
 import { resolve } from 'path';
-import {
-  writeFileSync,
-  rmSync,
-} from 'fs';
-import MonoContext from '@simplyhexagonal/mono-context';
+import fsExtra from 'fs-extra';
 import exec from '@simplyhexagonal/exec';
 import { Socket } from 'zeromq';
 
@@ -12,7 +8,13 @@ import {
   makeHeader,
   instanceUid,
   jupyterPolyfill,
-} from '../../utils';
+} from '../../utils/index.js';
+
+const {
+  rmSync,
+  existsSync,
+  writeFileSync,
+} = fsExtra;
 
 let executionCount = 0;
 
@@ -39,8 +41,6 @@ export default async (
     delimiter: Buffer,
   }
 ) => {
-  const logger = MonoContext.getStateValue('logger');
-
   executionCount += 1;
 
   let content: any = {
@@ -83,19 +83,30 @@ export default async (
       delimiter,
     }
   );
+  const consecutiveTsFile = resolve(process.cwd(), `.ts-kernel/${instanceUid}/${executionCount.toString(16).padStart(16, '0')}.ts`);
 
-  const tempTsFile = resolve(process.cwd(), `._${instanceUid}-${executionCount}.ts`);
+  writeFileSync(
+    consecutiveTsFile,
+    `${reqContent.code}`,
+  );
+
+  const tempTsFile = resolve(process.cwd(), `.ts-kernel/${instanceUid}/_run.ts`);
+  const polyfillTsFile = resolve(process.cwd(), `.ts-kernel/${instanceUid}/_polyfill.ts`);
 
   writeFileSync(
     tempTsFile,
-    `${jupyterPolyfill}${reqContent.code}`,
+    `await import('${polyfillTsFile}'); await import ('${consecutiveTsFile}');`,
   );
 
-  const { exitCode, stdoutOutput, stderrOutput } = await exec(
-    `${resolve(__dirname, '..', 'node_modules', '.bin', 'ts-node')} --swc ${tempTsFile}`,
-  ).catch(
-    async (e) => {
+  //@ts-ignore
+  const { execPromise } = exec(
+    `node --experimental-network-imports --loader ${resolve(__dirname, 'node_modules/ts-node/esm/transpile-only.mjs')} ${tempTsFile}`,
+  );
+
+  const { exitCode, stdoutOutput, stderrOutput } = await execPromise.catch(
+    async (e: any) => {
       await logger.error(e);
+
       return e;
     }
   );
@@ -143,11 +154,4 @@ export default async (
       delimiter,
     }
   );
-
-  const metadata = {
-    dependencies_met: true,
-    engine: instanceUid,
-    status: 'ok',
-    started: new Date().toISOString(),
-  };
 }

@@ -1,11 +1,13 @@
 
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
 import { createHmac } from 'crypto';
 import { Socket } from 'zeromq';
 import ShortUniqueId from 'short-unique-id';
 
-import { KernealHeader } from '../interfaces';
+import { KernealHeader } from '../interfaces.js';
 
-export const uid = new ShortUniqueId();
+export const uid = new ShortUniqueId.default();
 
 let msgConsecutive = 0;
 
@@ -71,9 +73,14 @@ export const makeHeader = (
   date: new Date().toISOString(),
 });
 
-export const jupyterPolyfill = `
-const jupyter: {
-  out: (...args: any[]) => void
-} = {};
-jupyter.out = console.log;
-`;
+export const jupyterPolyfill = [
+  ['PATH_KERNEL_DIR', resolve(__dirname)],
+  ['SCRIPT_PATH_ESCAPE_UNICODE', resolve(__dirname, 'src/vendor/escape-unicode-html.mjs')],
+  ['SCRIPT_PATH_D3_DSV', resolve(__dirname, 'src/vendor/d3-dsv/index.mjs')],
+  ['SCRIPT_PATH_D3_SELECTION', resolve(__dirname, 'src/vendor/d3-selection/index.mjs')],
+].reduce(
+  (a, [key, value]) => {
+    return a.replace(key, value);
+  },
+  readFileSync(resolve(__dirname, 'src/utils/polyfill.ts'), 'utf8'),
+);

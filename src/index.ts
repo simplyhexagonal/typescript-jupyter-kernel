@@ -1,25 +1,18 @@
-require('dotenv').config();
+(await import('dotenv')).config();
 
-import MonoContext from '@simplyhexagonal/mono-context';
-import Logger from '@simplyhexagonal/logger';
+//@ts-ignore
+await import('../global.mjs');
 
-import cli from './cli';
-import main from './threads/main';
-import heartbeat from './threads/heartbeat';
-import shell from './threads/shell';
-import { KernelConfig } from './interfaces';
+import cli from './cli/index.js';
+import main from './threads/main/index.js';
+import heartbeat from './threads/heartbeat/index.js';
+import { KernelConfig } from './interfaces.js';
 
-const logger = new Logger({});
-
-MonoContext.setState({
-  logger,
-});
-
-export default async () => {
+(async () => {
   await cli();
 
   const jupyterConfigPath = process.argv[2] || process.env.JUPYTER_CONFIG_PATH || '';
-  const jupyterConfig = require(jupyterConfigPath) as KernelConfig;
+  const jupyterConfig = (await import(jupyterConfigPath, { assert: { type: 'json' } })).default as KernelConfig;
 
   const threadName = process.env.TS_KERNEL_THREAD || '';
 
@@ -32,7 +25,7 @@ export default async () => {
       heartbeat(jupyterConfig);
       break;
     case 'shell':
-      shell(jupyterConfig);
+      (await import('./threads/shell/index.js')).default(jupyterConfig);
       break;
   }
-}
+})();

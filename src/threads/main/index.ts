@@ -1,17 +1,14 @@
 import { resolve as resolvePath } from 'path';
 import { fork } from 'child_process';
-import MonoContext from '@simplyhexagonal/mono-context';
 
-import { KernelConfig } from '../../interfaces';
+import { KernelConfig } from '../../interfaces.js';
 
 const startThread = (
   threadName: string,
   jupyterConfigPath: string,
   reject: (e?: any) => void
 ) => {
-  const logger = MonoContext.getStateValue('logger');
-
-  const tsKernelPath = resolvePath(__dirname, '..', 'bin', 'ts-kernel');
+  const tsKernelPath = resolvePath(__dirname, 'src/index.ts');
 
   const thread = fork(
     tsKernelPath,
@@ -46,8 +43,6 @@ export default async (
   jupyterConfigPath: string,
   jupyterConfig: KernelConfig,
 ) => {
-  const logger = MonoContext.getStateValue('logger');
-
   await logger.info('Starting Typescript kernel with config:', jupyterConfig);
 
   return new Promise<void>(({}, reject) => {

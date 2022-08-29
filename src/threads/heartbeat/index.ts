@@ -1,11 +1,8 @@
-import MonoContext from '@simplyhexagonal/mono-context';
 import zmq from 'zeromq';
 
-import { KernelConfig } from '../../interfaces';
+import { KernelConfig } from '../../interfaces.js';
 
 export default (jupyterConfig: KernelConfig) => {
-  const logger = MonoContext.getStateValue('logger');
-
   logger.info('Heartbeat thread started');
 
   const heartbeatSocket = zmq.socket('rep');

@@ -1,18 +1,23 @@
 import { resolve } from 'path';
-import {
+import fsExtra from 'fs-extra';
+
+const {
   statSync,
-  mkdirSync,
+  mkdirpSync,
   writeFileSync,
   readFileSync,
   copyFileSync,
-} from 'fs';
-import MonoContext from '@simplyhexagonal/mono-context';
+} = fsExtra;
 
 export default async () => {
-  const logger = MonoContext.getStateValue('logger');
-
-  if (process.argv[2] === '--version') {
-    console.log(require(resolve(__dirname, '../package.json')).version);
+  if (process.argv[2] === '--version' || process.argv[2] === '-v' || process.argv[2] === '') {
+    console.log(
+      (
+        await import(
+          resolve(__dirname, 'package.json'),  { assert: { type: 'json' } }
+        )
+      ).default.version,
+    );
 
     process.exit(0);
   }
@@ -26,7 +31,7 @@ export default async () => {
 
     let kernelsPath = '';
 
-    let kernelJsonPath = resolve(__dirname, '../kernel.json');
+    let kernelJsonPath = resolve(__dirname, 'kernel.json');
 
     if (process.argv[3]) {
       kernelJsonPath = resolve(process.argv[3]);
@@ -50,7 +55,7 @@ export default async () => {
     await logger.info('Found kernels path:', kernelsPath, '\n\nInstalling Typescript kernel to:', installFilePath);
 
     try {
-      mkdirSync(`${kernelsPath}/typescript`, { recursive: true });
+      mkdirpSync(`${kernelsPath}/typescript`);
 
       const config = readFileSync(kernelJsonPath);
 
@@ -67,10 +72,8 @@ export default async () => {
     }
 
     try {
-      const kernelDirPath = kernelJsonPath.replace(/\/.+?$/, '').replace(/^[^\/\\]+$/, '');
-
-      const logo32Path = resolve(kernelDirPath, 'logo-32x32.png');
-      const logo64Path = resolve(kernelDirPath, 'logo-64x64.png');
+      const logo32Path = resolve(__dirname, 'logo-32x32.png');
+      const logo64Path = resolve(__dirname, 'logo-64x64.png');
 
       statSync(logo32Path).isFile() && copyFileSync(logo32Path, `${kernelsPath}/typescript/logo-32x32.png`);
       statSync(logo64Path).isFile() && copyFileSync(logo64Path, `${kernelsPath}/typescript/logo-64x64.png`);

@@ -4,7 +4,7 @@ import { Socket } from 'zeromq';
 import {
   send,
   makeHeader,
-} from '../../utils';
+} from '../../utils/index.js';
 
 export default async (
   {
@@ -28,10 +28,7 @@ export default async (
     delimiter: Buffer,
   }
 ) => {
-  const {
-    logger,
-    tspServer,
-  } = MonoContext.getState();
+  const { tspServer } = MonoContext.default.getState();
 
   const { code, cursor_pos: cursor_end } = reqContent;
 

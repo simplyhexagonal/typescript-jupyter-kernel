@@ -1,10 +1,9 @@
-import MonoContext from '@simplyhexagonal/mono-context';
 import { Socket } from 'zeromq';
 
 import {
   send,
   makeHeader,
-} from '../../utils';
+} from '../../utils/index.js';
 
 export default async (
   {
@@ -28,8 +27,6 @@ export default async (
     delimiter: Buffer,
   }
 ) => {
-  const { logger } = MonoContext.getState();
-
   send(
     shellSocket,
     {

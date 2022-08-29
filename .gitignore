@@ -6,3 +6,5 @@ node_modules
 ._*.ts
 *.pid
 test-notebooks
+*.tgz
+.ts-kernel

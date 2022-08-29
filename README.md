@@ -1,20 +1,20 @@
-## Features
+## Install
 
-**Easy to install:** easy as...
+Make sure you have Jupyter Notebook or Jupyter Lab installed.
 
-### 1
+Then, install the package with:
 
 ```sh
 npm install -g typescript-jupyter-kernel
 ```
 
-### 2
+Once npm has finished, run the following command:
 
 ```
 ts-kernel install
 ```
 
-### 3
+You can now check if the installation succeeded:
 
 ```sh
 jupyter kernelspec list
@@ -22,6 +22,8 @@ jupyter kernelspec list
 # Available kernels:
 #  typescript        ~/.local/share/jupyter/kernels/typescript
 ```
+
+## Features
 
 **Code completion:** using the `TAB` key, driven by the official [Typescript LSP Server](https://github.com/typescript-language-server/typescript-language-server) (same used by VSCode)
 
@@ -49,3 +51,43 @@ aren't riddled with unsightly `console.log` calls
 **Fully compatible:** works both in JupyterLab and Jupyter Notebook
 
 ![](https://raw.githubusercontent.com/simplyhexagonal/typescript-jupyter-kernel/main/assets/typescript-jupyter-kernel-in-jupyter-lab.png)
+
+## Convenience `jupyter` functionalities
+
+We have implemented a handy `jupyter` object containing several useful functions:
+
+- `dom`
+
+  This is a virtual dom (JSDOM) which allows you to build html in the notebook.
+
+```ts
+
+```
+
+- `html`
+
+  This is an alias for the included D3 Selection library which allows powerful HTML manipulation.
+
+- `render`
+
+  This is a function that renders the html in the notebook.
+
+- `out`
+
+  This is a function that prints a given string to the notebook between `<pre>` tags, useful for printing the raw output of a function or process.
+
+- `escape`
+
+  This is a function that escapes the given string so it can be safely printed in the notebook.
+
+- `data`
+
+  This is an alias for the included D3 DSV library which allows to read data from/to CSV, TSV or JSON files/strings.
+
+- `table`
+
+  This is a function that renders a table in the notebook from data using one of the `data` functions.
+
+- `load`
+
+  You can use the `load` helper to load either a `js` or `css` file into the notebook.

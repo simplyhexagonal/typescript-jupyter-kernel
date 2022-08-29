@@ -1,26 +1,32 @@
 {
   "compilerOptions": {
-    "target": "esnext",
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "downlevelIteration": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "lib": ["ESNext"],
-    "moduleResolution": "node",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
-    "types": ["node"]
+    "types": ["node"],
+    "outDir": "dist"
   },
   "ts-node": {
+    "esm": true,
+    "swc": true,
     "compilerOptions": {
       "target": "esnext"
     }
   },
-  "include": ["src"],
+  "include": [
+    "global.d.ts",
+    "src"
+  ],
   "exclude": ["node_modules", "dist", "src/index.test.ts"]
 }

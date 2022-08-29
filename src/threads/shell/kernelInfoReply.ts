@@ -3,10 +3,12 @@ import { Socket } from 'zeromq';
 import {
   send,
   makeHeader,
-} from '../../utils';
+} from '../../utils/index.js';
 
 // @ts-ignore
-import { version as implementation_version } from '../../../package.json';
+import pkgJson from '../../../package.json' assert { type: 'json' };
+
+const { version: implementation_version } = pkgJson;
 
 export default (
   {
@@ -36,7 +38,7 @@ export default (
     implementation_version,
     language_info: {
       name: 'typescript',
-      version: '1.0',
+      version: '4.8.2',
       mimetype: 'text/x-typescript',
       file_extension: '.ts',
       pygments_lexer: 'ts',

@@ -1,6 +1,0 @@
-#! /usr/bin/env node
-const { resolve } = require('path');
-
-const tsKernel = require(resolve(__dirname, '..', 'dist', 'ts-kernel.js')).default;
-
-module.exports = tsKernel();

@@ -1,14 +1,32 @@
+import { resolve } from 'path';
+import fsExtra from 'fs-extra';
 import MonoContext from '@simplyhexagonal/mono-context';
-import { TspClient } from 'typescript-language-server/lib/tsp-client';
-import { ConsoleLogger } from 'typescript-language-server/lib/logger';
-import { TypeScriptVersionProvider } from 'typescript-language-server/lib/utils/versionProvider';
+import { TspClient } from 'typescript-language-server/lib/tsp-client.js';
+import { ConsoleLogger } from 'typescript-language-server/lib/logger.js';
+import {
+  TypeScriptVersion,
+  TypeScriptVersionProvider,
+} from 'typescript-language-server/lib/utils/versionProvider.js';
+import API from 'typescript-language-server/lib/utils/api.js';
 
-import { KernelConfig } from '../../interfaces';
+import { KernelConfig } from '../../interfaces.js';
 
-import kernelInfoReply from './kernelInfoReply';
-import executeReply from './executeReply';
-import completeReply from './completeReply';
-import historyReply from './historyReply';
+import {
+  instanceUid,
+  jupyterPolyfill,
+} from '../../utils/index.js';
+
+import kernelInfoReply from './kernelInfoReply.js';
+import executeReply from './executeReply.js';
+import completeReply from './completeReply.js';
+import historyReply from './historyReply.js';
+
+const {
+  rmSync,
+  existsSync,
+  mkdirpSync,
+  writeFileSync,
+} = fsExtra;
 
 const reqResMap: {[k: string]: (a: any) => void} = {
   'kernel_info_request': kernelInfoReply,
@@ -17,13 +35,14 @@ const reqResMap: {[k: string]: (a: any) => void} = {
   'history_request': historyReply,
 };
 
-export default ({ip, shell_port, iopub_port, key}: KernelConfig) => {
-  const zmq = require('zeromq');
+export default async ({ip, shell_port, iopub_port, key}: KernelConfig) => {
+  const zmq = await import('zeromq');
 
   const typescriptVersionProvider = new TypeScriptVersionProvider();
-  const tspBundle = typescriptVersionProvider.bundledVersion();
+  const tspBundle = typescriptVersionProvider.bundledVersion() as TypeScriptVersion;
 
   const tspServer = new TspClient({
+      apiVersion: tspBundle.version as API,
       logger: new ConsoleLogger(),
       // logVerbosity: 'verbose',
       tsserverPath: tspBundle!.tsServerPath,
@@ -32,11 +51,24 @@ export default ({ip, shell_port, iopub_port, key}: KernelConfig) => {
 
   tspServer.start();
 
-  MonoContext.setState({
+  const tempTsDir = resolve(process.cwd(), '.ts-kernel');
+
+  if (existsSync(tempTsDir)) {
+    rmSync(tempTsDir, { recursive: true, force: true });
+  }
+
+  mkdirpSync(`${tempTsDir}/${instanceUid}`);
+
+  const polyfillTsFile = resolve(process.cwd(), `.ts-kernel/${instanceUid}/_polyfill.ts`);
+
+  writeFileSync(
+    polyfillTsFile,
+    `${jupyterPolyfill}`,
+  );
+
+  MonoContext.default.setState({
     tspServer,
   });
-
-  const logger = MonoContext.getStateValue('logger');
 
   logger.info('Shell thread started');
 
